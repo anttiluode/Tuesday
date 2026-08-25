@@ -1,5 +1,7 @@
 # Tuesday — Matrix Lab
 
+Live demo: https://anttiluode.github.io/Tuesday/
+
 **Status: first runnable gate set, 2026-08-25.**
 
 Tuesday starts where Monday ended: stop asking a matrix to be a metaphor and ask what it can actually recover.
