@@ -1,0 +1,8 @@
+{
+  "T0": {"gate":"T0 algorithm cocktail party","ica_mean_abs_corr":0.999999597117165,"pca_mean_abs_corr":0.707106780466414,"pass":true},
+  "T1": {"gate":"T1 independent systems, not independent coordinates","best_subspace_score":0.999879058919795,"chosen_groups":[[0,2,3],[1,4]],"pass":true},
+  "T2": {"gate":"T2 many eyes, same causes","iva_mean_corr_per_view":[0.9883039886426501,0.9883039886426501,0.9883039886426501,0.98830398864265],"iva_orders":[[1,0],[1,0],[1,0],[1,0]],"separate_ica_orders":[[1,0],[1,0],[0,1],[1,0]],"pass":true},
+  "T3": {"gate":"T3 convolutive propagation / AuxIVA","auxiva_mean_abs_corr":0.7697932442095797,"raw_sensor_mean_abs_corr":0.755043157556089,"max_wrong_source_leakage":0.017871806625182576,"pass":true},
+  "T4": {"gate":"T4 causes buy transfer for a ResonantCortex-style dynamics learner","raw_cross_geometry_mse":2.764163017272949,"iva_cross_geometry_mse":0.08214890956878662,"oracle_mse":0.0011620612349361181,"iva_over_raw_ratio":0.029719270916891357,"pass":true},
+  "T5": {"gate":"T5 break the linear matrix","linear_mean_abs_corr":0.999999597117165,"nonlinear_mean_abs_corr":0.6697352988452179,"interpretation":"PASS means the linear model failed where its assumptions were deliberately violated.","pass":true}
+}
