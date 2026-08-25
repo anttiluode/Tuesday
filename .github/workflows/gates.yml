@@ -1,0 +1,30 @@
+name: Tuesday gates
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  gates:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+      - run: pip install -r requirements.txt
+      - name: T0 ICA
+        run: python experiments/gate_t0_algorithm_cocktail.py
+      - name: T1 ISA-style subspaces
+        run: python experiments/gate_t1_independent_subspaces.py
+      - name: T2 multi-view IVA
+        run: python experiments/gate_t2_many_eyes_iva.py
+      - name: T3 convolutive AuxIVA
+        run: python experiments/gate_t3_convolutive_auxiva.py
+      - name: T4 Resonant transfer
+        run: python experiments/gate_t4_resonant_transfer.py
+      - name: T5 nonlinear boundary
+        run: python experiments/gate_t5_break_linear_matrix.py
