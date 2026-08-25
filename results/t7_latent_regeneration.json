@@ -1,0 +1,55 @@
+{
+  "status": "exploratory",
+  "question": "Does a structured predictive latent make a decoder regenerate a hidden image patch better than reconstruction or prediction alone?",
+  "models": {
+    "A": "reconstruction only",
+    "B": "reconstruction + diagonal complex prediction",
+    "C0": "B + lag-0 complex decorrelation attacker",
+    "C": "B + SOBI-inspired cross-component decorrelation at lags 0,1,2,4,8"
+  },
+  "setup": {
+    "image_size": 20,
+    "train_frames": 350,
+    "test_frames": 150,
+    "latent": "2 complex units (4 real degrees)",
+    "mask": [6, 14, 6, 14],
+    "seeds": [0, 1, 2],
+    "epochs": 600
+  },
+  "per_seed": {
+    "0": {
+      "A": {"clean_reconstruction_mse": 0.012737300246953964, "one_step_prediction_mse": null, "missing_patch_mse": 0.0321965381237013, "n_nontrivial_masked_frames": 42},
+      "B": {"clean_reconstruction_mse": 0.012734995223581791, "one_step_prediction_mse": 0.012746485881507397, "missing_patch_mse": 0.032104817274514405, "n_nontrivial_masked_frames": 42},
+      "C0": {"clean_reconstruction_mse": 0.006061566527932882, "one_step_prediction_mse": 0.005957505200058222, "missing_patch_mse": 0.02055256617521601, "n_nontrivial_masked_frames": 42},
+      "C": {"clean_reconstruction_mse": 0.005911285523325205, "one_step_prediction_mse": 0.005721658933907747, "missing_patch_mse": 0.01944734824688307, "n_nontrivial_masked_frames": 42}
+    },
+    "1": {
+      "A": {"clean_reconstruction_mse": 0.0127141447737813, "one_step_prediction_mse": null, "missing_patch_mse": 0.03193204076073709, "n_nontrivial_masked_frames": 42},
+      "B": {"clean_reconstruction_mse": 0.012734474614262581, "one_step_prediction_mse": 0.01274602860212326, "missing_patch_mse": 0.03209873971839746, "n_nontrivial_masked_frames": 42},
+      "C0": {"clean_reconstruction_mse": 0.005739679094403982, "one_step_prediction_mse": 0.005610999651253223, "missing_patch_mse": 0.018120767177259994, "n_nontrivial_masked_frames": 42},
+      "C": {"clean_reconstruction_mse": 0.00579130370169878, "one_step_prediction_mse": 0.005714721512049437, "missing_patch_mse": 0.018006729100653457, "n_nontrivial_masked_frames": 42}
+    },
+    "2": {
+      "A": {"clean_reconstruction_mse": 0.012737436220049858, "one_step_prediction_mse": null, "missing_patch_mse": 0.03216646318989141, "n_nontrivial_masked_frames": 42},
+      "B": {"clean_reconstruction_mse": 0.012735563330352306, "one_step_prediction_mse": 0.012746877036988735, "missing_patch_mse": 0.03210163974602308, "n_nontrivial_masked_frames": 42},
+      "C0": {"clean_reconstruction_mse": 0.0060730986297130585, "one_step_prediction_mse": 0.005975101143121719, "missing_patch_mse": 0.019128104189543853, "n_nontrivial_masked_frames": 42},
+      "C": {"clean_reconstruction_mse": 0.005788558162748814, "one_step_prediction_mse": 0.0058173262514173985, "missing_patch_mse": 0.019780823484151847, "n_nontrivial_masked_frames": 42}
+    }
+  },
+  "mean_clean_reconstruction_mse": {
+    "A": 0.012729627080261707,
+    "B": 0.01273501105606556,
+    "C0": 0.005958114750683308,
+    "C": 0.005830382462590933
+  },
+  "mean_missing_patch_mse": {
+    "A": 0.03209834735810994,
+    "B": 0.032101732246311646,
+    "C0": 0.01926714584733995,
+    "C": 0.019078300277229458
+  },
+  "relative_patch_mse_C_vs_A": 0.5943701731550098,
+  "relative_patch_mse_C_vs_B": 0.5943075012539697,
+  "relative_patch_mse_C_vs_C0": 0.9901985705819232,
+  "interpretation": "If C beats A/B, structured latent coordinates bought regeneration. C0 is the attribution attacker: if C does not beat C0, the current result cannot be credited specifically to lagged/SOBI structure rather than ordinary decorrelation."
+}
