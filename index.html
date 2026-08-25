@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Tuesday — Matrix Lab</title>
+<style>
+:root{--bg:#071018;--panel:#0d1a24;--panel2:#102432;--ink:#e9f3f6;--muted:#9db2bd;--line:#27404d;--cyan:#52d6e8;--gold:#ffd166;--green:#74e39b;--red:#ff7b7b;--violet:#b495ff}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at 20% 0,#123143 0,#071018 38rem);color:var(--ink);font-family:Inter,ui-sans-serif,system-ui,-apple-system,Segoe UI,sans-serif;line-height:1.5}a{color:var(--cyan)}
+header{max-width:1180px;margin:auto;padding:64px 24px 24px}h1{font-size:clamp(2.5rem,7vw,5.8rem);margin:0;letter-spacing:-.055em;line-height:.95}.kicker{font:700 .78rem/1.2 ui-monospace,SFMono-Regular,Menlo,monospace;color:var(--cyan);letter-spacing:.18em;text-transform:uppercase}.lede{max-width:850px;font-size:1.25rem;color:#c8d8de}.question{border-left:3px solid var(--gold);padding:12px 18px;background:#0c1921;border-radius:0 10px 10px 0;font-size:1.2rem}
+main{max-width:1180px;margin:auto;padding:10px 24px 80px}.grid{display:grid;grid-template-columns:repeat(12,1fr);gap:16px}.card{background:linear-gradient(180deg,rgba(18,39,52,.95),rgba(10,24,33,.96));border:1px solid var(--line);border-radius:16px;padding:20px;box-shadow:0 18px 50px rgba(0,0,0,.18)}.span6{grid-column:span 6}.span12{grid-column:span 12}.span4{grid-column:span 4}@media(max-width:800px){.span6,.span4{grid-column:span 12}}
+h2{font-size:1.9rem;margin:8px 0 12px}h3{margin:2px 0 8px;font-size:1.2rem}.small{font-size:.9rem;color:var(--muted)}.mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace}.badge{display:inline-block;padding:4px 9px;border-radius:999px;font:bold .72rem ui-monospace;background:#173241;color:var(--green);border:1px solid #285268}.warn{color:var(--gold)}.fail{color:var(--red)}
+.metric{display:flex;justify-content:space-between;gap:10px;padding:8px 0;border-bottom:1px solid rgba(90,130,145,.2)}.metric:last-child{border-bottom:0}.metric strong{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;color:#fff}.bar{height:9px;background:#10202a;border-radius:9px;overflow:hidden;margin:5px 0 13px}.bar>i{display:block;height:100%;background:linear-gradient(90deg,var(--cyan),var(--violet));border-radius:9px}.bar.bad>i{background:linear-gradient(90deg,var(--red),var(--gold))}
+canvas{width:100%;height:180px;background:#061018;border:1px solid #1f3642;border-radius:10px;display:block}.controls{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:12px}.ctrl label{display:flex;justify-content:space-between;font:12px ui-monospace;color:var(--muted)}input[type=range]{width:100%}.buttons{display:flex;gap:8px;flex-wrap:wrap;margin:14px 0}button{appearance:none;border:1px solid #315264;background:#112936;color:#eaf7fa;border-radius:9px;padding:9px 12px;font-weight:700;cursor:pointer}button.active{border-color:var(--gold);color:var(--gold)}
+.matrix{display:grid;grid-template-columns:repeat(2,72px);gap:6px;width:max-content;margin:10px 0}.matrix div{padding:8px;text-align:center;border:1px solid #345061;background:#081721;border-radius:6px;font:13px ui-monospace}.flow{display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap;margin:18px 0}.node{padding:10px 13px;border:1px solid #345263;border-radius:10px;background:#091722;font:13px ui-monospace}.arrow{color:var(--gold)}
+.receipts{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}@media(max-width:900px){.receipts{grid-template-columns:1fr}}.receipt{border:1px solid var(--line);border-radius:12px;padding:14px;background:#091722}.receipt .n{font:bold 1.7rem ui-monospace;color:var(--cyan)}
+.paper{padding:10px 0;border-bottom:1px solid rgba(90,130,145,.2)}.paper:last-child{border-bottom:0}.footer{color:var(--muted);text-align:center;margin-top:48px}
+</style>
+</head>
+<body>
+<header>
+  <div class="kicker">Tuesday / Bluesday / 2026-08-25</div>
+  <h1>Matrix Lab</h1>
+  <p class="lede">Two known dynamical worlds are hidden inside changing mixtures. The job is not to make a beautiful latent plot. The job is to recover causes, keep their identity across views, and see whether that buys prediction.</p>
+  <div class="question"><b>Question:</b> can a learned law survive when the sensors change, if source separation first gives it a more enduring coordinate system?</div>
+</header>
+<main>
+<section class="grid">
+  <article class="card span12">
+    <span class="badge">LIVE MATRIX TOY</span>
+    <h2>First see the geometry</h2>
+    <p>The two top traces are hidden sources: a Lorenz coordinate and a bounded complex-quadratic orbit. The two bottom traces are sensor mixtures. Change the 2×2 matrix. <b>UNMIX</b> uses the known inverse matrix only to make the geometry visible; the Python T0 gate uses blind ICA and does not know the matrix.</p>
+    <div class="grid">
+      <div class="span6"><h3>Hidden causes</h3><canvas id="sources"></canvas></div>
+      <div class="span6"><h3 id="mixTitle">Observed mixtures</h3><canvas id="mixtures"></canvas></div>
+    </div>
+    <div class="buttons"><button id="mixBtn" class="active">SHOW MIXTURE</button><button id="unmixBtn">UNMIX WITH KNOWN A⁻¹</button><button id="randomBtn">RANDOM MATRIX</button></div>
+    <div class="controls">
+      <div class="ctrl"><label><span>a11</span><span id="a11v"></span></label><input id="a11" type="range" min="-2" max="2" step=".01" value="1.41"></div>
+      <div class="ctrl"><label><span>a12</span><span id="a12v"></span></label><input id="a12" type="range" min="-2" max="2" step=".01" value="1.41"></div>
+      <div class="ctrl"><label><span>a21</span><span id="a21v"></span></label><input id="a21" type="range" min="-2" max="2" step=".01" value="-.35"></div>
+      <div class="ctrl"><label><span>a22</span><span id="a22v"></span></label><input id="a22" type="range" min="-2" max="2" step=".01" value=".35"></div>
+    </div>
+    <div class="matrix"><div id="m11"></div><div id="m12"></div><div id="m21"></div><div id="m22"></div></div>
+    <div class="small mono" id="det"></div>
+  </article>
+
+  <article class="card span4"><span class="badge">T0 PASS</span><h2>ICA</h2><p>Scalar causes, instantaneous linear mixture.</p><div class="metric"><span>ICA recovery</span><strong>0.9999996</strong></div><div class="metric"><span>PCA attacker</span><strong>0.7071068</strong></div><div class="bar"><i style="width:100%"></i></div><p class="small">Independence adds information that variance axes do not contain.</p></article>
+  <article class="card span4"><span class="badge">T1 PASS</span><h2>ISA</h2><p>The source is allowed to be a dependent <em>subspace</em>.</p><div class="flow"><span class="node">Lorenz [x,y,z]</span><span class="arrow">⊥</span><span class="node">Quadratic [Re,Im]</span></div><div class="metric"><span>subspace affinity</span><strong>0.9998791</strong></div><p class="small">ICA preprocessing + mutual-dependence grouping. We score spans, not privileged axes.</p></article>
+  <article class="card span4"><span class="badge">T2 PASS</span><h2>IVA</h2><p>Four different sensor coordinate systems, the same two hidden causes.</p><div class="metric"><span>mean recovery</span><strong>0.988304</strong></div><div class="metric"><span>common order</span><strong>4 / 4</strong></div><p class="small">Separate ICA also separates well, but one view flips the component order. IVA keeps corresponding source vectors linked.</p></article>
+
+  <article class="card span6"><span class="badge">T3 PASS — MODEST</span><h2>AuxIVA after propagation</h2><div class="flow"><span class="node">cause</span><span class="arrow">→</span><span class="node">delay + FIR</span><span class="arrow">→</span><span class="node">STFT</span><span class="arrow">→</span><span class="node">W(f)</span></div><div class="metric"><span>recovery</span><strong>0.769793</strong></div><div class="metric"><span>wrong-source leakage</span><strong>0.017872</strong></div><p class="small">This is not a giant win over the already-favorable raw sensors. The cleaner result is the low residual cross-source leakage.</p></article>
+
+  <article class="card span6"><span class="badge">T4 STRONGEST</span><h2>Cause coordinates buy transfer</h2><p>A small ResonantCortex-style complex predictor is trained in one sensor world and evaluated in another.</p><div class="metric"><span>raw sensor coordinates</span><strong>2.76416 MSE</strong></div><div class="bar bad"><i style="width:100%"></i></div><div class="metric"><span>IVA-linked coordinates</span><strong>0.08215 MSE</strong></div><div class="bar"><i style="width:2.97%"></i></div><div class="metric"><span>oracle sources</span><strong>0.00116 MSE</strong></div><p><b>~34× lower error</b> after source alignment than raw cross-geometry transfer.</p><p class="small">Caveat: joint IVA is fitted unsupervised on the two-view observations. This is a multi-view representation experiment, not yet a strict online new-sensor test.</p></article>
+
+  <article class="card span12"><span class="badge" style="color:var(--gold)">T5 MODEL BOUNDARY</span><h2>Break the matrix on purpose</h2><div class="flow"><span class="node">s</span><span class="arrow">→</span><span class="node">A s</span><span class="arrow">→</span><span class="node">tanh(1.2 ·)</span><span class="arrow">→</span><span class="node">x</span></div><div class="grid"><div class="span6"><div class="metric"><span>linear control</span><strong>0.9999996</strong></div></div><div class="span6"><div class="metric"><span>linear ICA on nonlinear sensor</span><strong class="fail">0.669735</strong></div></div></div><p>Good. It fails. The response is not “tune FastICA harder”; the response is to move to identifiable nonlinear-ICA assumptions that use temporal or auxiliary structure.</p></article>
+
+  <article class="card span12"><span class="badge">T6</span><h2>What Tuesday currently says</h2><div class="receipts">
+    <div class="receipt"><div class="n">01</div><b>Coordinate recovery</b><p class="small">ICA can recover hidden scalar causes when the linear identifiable model holds.</p></div>
+    <div class="receipt"><div class="n">02</div><b>Cause ≠ coordinate</b><p class="small">Independent systems can contain dependent internal coordinates. Score the subspace.</p></div>
+    <div class="receipt"><div class="n">03</div><b>Identity across views</b><p class="small">IVA's practical gift is correspondence across different local mixing geometries.</p></div>
+    <div class="receipt"><div class="n">04</div><b>Propagation matters</b><p class="small">For delays/reverberation the demixer becomes frequency-dependent W(f).</p></div>
+    <div class="receipt"><div class="n">05</div><b>Use is the meter</b><p class="small">The most interesting result is downstream transfer, not a pretty separated waveform.</p></div>
+    <div class="receipt"><div class="n">06</div><b>Know when to stop</b><p class="small">Nonlinear mixing breaks ordinary linear ICA. Use the science for the next model class.</p></div>
+  </div></article>
+
+  <article class="card span6"><h2>Where IVE enters next</h2><p>Full IVA explains the orchestra. <b>Independent Vector Extraction</b> asks for only one source vector of interest. Tuesday does not fake this by selecting a row after full IVA.</p><div class="flow"><span class="node">many causes</span><span class="arrow">→</span><span class="node">mixtures</span><span class="arrow">→</span><span class="node">IVE: one source</span></div><p class="small">The next fair gate is computational: if only one cause matters to the predictor, can proper IVE recover/adapt it more cheaply than full separation?</p></article>
+
+  <article class="card span6"><h2>Lineage</h2><p><a href="https://github.com/anttiluode/BrainArchitectureAnalyzer2">BrainArchitectureAnalyzer2</a> separated observation covariance, demixing and transition matrices.</p><p><a href="https://github.com/anttiluode/ResonantCortex">ResonantCortex</a> supplied the complex learner and Lorenz/Mandelbrot lineage.</p><p><a href="https://github.com/anttiluode/Monday">Monday</a> supplied the “mixtures → causes” language and the demand that a factorization buy something.</p><p><a href="https://github.com/anttiluode/Tuesday">Tuesday source</a> contains every runnable gate and JSON receipt.</p></article>
+
+  <article class="card span12"><h2>Papers behind the demo</h2>
+    <div class="paper"><b>ICA</b> — Hyvärinen & Oja (2000), <a href="https://doi.org/10.1016/S0893-6080(00)00026-5">Independent component analysis: algorithms and applications</a>.</div>
+    <div class="paper"><b>IVA</b> — Kim, Eltoft & Lee (2006), <a href="https://doi.org/10.1007/11679363_21">Independent Vector Analysis: An Extension of ICA to Multivariate Components</a>.</div>
+    <div class="paper"><b>ISA</b> — Szabó, Póczos & Lőrincz (2012), <a href="https://doi.org/10.1016/j.patcog.2011.09.007">Separation theorem for independent subspace analysis and its consequences</a>.</div>
+    <div class="paper"><b>AuxIVA</b> — Ono (2011), <a href="https://doi.org/10.1109/ASPAA.2011.6082320">Stable and fast update rules for independent vector analysis based on auxiliary function technique</a>.</div>
+    <div class="paper"><b>IVA overview</b> — Arvila et al. (2025), <a href="https://arxiv.org/abs/2506.16175">Independent vector analysis — an introduction for statisticians</a>.</div>
+    <div class="paper"><b>Dynamic ICA / IVA / extraction</b> — Koldovský et al. (2021), <a href="https://doi.org/10.1109/TSP.2021.3068626">Time-Variant Linear Mixtures Separable by Time-Invariant Beamformers</a>.</div>
+    <div class="paper"><b>Nonlinear boundary</b> — Hyvärinen, Sasaki & Turner (2019), <a href="https://proceedings.mlr.press/v89/hyvarinen19a.html">Nonlinear ICA Using Auxiliary Variables and Generalized Contrastive Learning</a>.</div>
+    <div class="paper"><b>Local neural BSS</b> — Bozkurt et al. (2026), <a href="https://arxiv.org/abs/2605.19965">Normative Networks for Source Separation via Local Plasticity and Dendritic Computation</a>.</div>
+  </article>
+</section>
+<p class="footer mono">Tuesday does not say “everything is a matrix.” It asks which transformations recover causes, and whether those causes remain useful when the view changes.</p>
+</main>
+<script>
+const N=900, dt=.01;
+function norm(a){let m=a.reduce((x,y)=>x+y,0)/a.length;let v=Math.sqrt(a.reduce((x,y)=>x+(y-m)*(y-m),0)/a.length)||1;return a.map(x=>(x-m)/v)}
+function lorenz(){let x=1,y=1,z=1,out=[];for(let i=0;i<N+500;i++){let dx=10*(y-x),dy=x*(28-z)-y,dz=x*y-(8/3)*z;x+=dt*dx;y+=dt*dy;z+=dt*dz;if(i>=500)out.push(x)}return norm(out)}
+function quad(){let zr=0,zi=0,cr=-.745,ci=.113,out=[];for(let i=0;i<N+500;i++){let nr=zr*zr-zi*zi+cr,ni=2*zr*zi+ci;zr=nr;zi=ni;if(zr*zr+zi*zi>16){zr=0;zi=0}if(i>=500)out.push(.75*zr+.35*zi)}return norm(out)}
+const s1=lorenz(),s2=quad();let mode='mix';
+const ids=['a11','a12','a21','a22'];
+function A(){return ids.map(id=>+document.getElementById(id).value)}
+function series(){let [a,b,c,d]=A();let x1=s1.map((v,i)=>a*v+b*s2[i]),x2=s1.map((v,i)=>c*v+d*s2[i]);if(mode==='mix')return[x1,x2];let det=a*d-b*c;if(Math.abs(det)<.08)return[x1.map(_=>0),x2.map(_=>0)];return[x1.map((v,i)=>(d*v-b*x2[i])/det),x1.map((v,i)=>(-c*v+a*x2[i])/det)]}
+function plot(canvas,arrs,cols){let ctx=canvas.getContext('2d'),w=canvas.width=canvas.clientWidth*devicePixelRatio,h=canvas.height=canvas.clientHeight*devicePixelRatio;ctx.clearRect(0,0,w,h);ctx.strokeStyle='#16303c';ctx.lineWidth=1;for(let k=1;k<4;k++){let y=h*k/4;ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(w,y);ctx.stroke()}arrs.forEach((a,j)=>{let max=Math.max(2.2,...a.map(Math.abs));ctx.strokeStyle=cols[j];ctx.lineWidth=1.35*devicePixelRatio;ctx.beginPath();a.forEach((v,i)=>{let x=i/(a.length-1)*w,y=h/2-v/max*h*.42;if(i===0)ctx.moveTo(x,y);else ctx.lineTo(x,y)});ctx.stroke()})}
+function draw(){let vals=A();ids.forEach((id,i)=>{document.getElementById(id+'v').textContent=vals[i].toFixed(2)});['m11','m12','m21','m22'].forEach((id,i)=>document.getElementById(id).textContent=vals[i].toFixed(2));let det=vals[0]*vals[3]-vals[1]*vals[2];document.getElementById('det').textContent='det(A) = '+det.toFixed(3)+(Math.abs(det)<.08?'  — near singular: inverse disabled':'');plot(document.getElementById('sources'),[s1,s2],['#52d6e8','#ffd166']);let q=series();plot(document.getElementById('mixtures'),q,mode==='mix'?['#b495ff','#74e39b']:['#52d6e8','#ffd166']);document.getElementById('mixTitle').textContent=mode==='mix'?'Observed mixtures':'Recovered with known A⁻¹ (visual geometry only)'}
+ids.forEach(id=>document.getElementById(id).addEventListener('input',draw));
+const mixButton=document.getElementById('mixBtn'), unmixButton=document.getElementById('unmixBtn');
+mixButton.onclick=()=>{mode='mix';mixButton.classList.add('active');unmixButton.classList.remove('active');draw()};
+unmixButton.onclick=()=>{mode='unmix';unmixButton.classList.add('active');mixButton.classList.remove('active');draw()};
+document.getElementById('randomBtn').onclick=()=>{let ok=false;while(!ok){let v=ids.map(()=>-1.6+Math.random()*3.2),det=v[0]*v[3]-v[1]*v[2];if(Math.abs(det)>.35){ids.forEach((id,i)=>document.getElementById(id).value=v[i]);ok=true}}draw()};
+addEventListener('resize',draw);draw();
+</script>
+</body>
+</html>
