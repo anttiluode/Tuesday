@@ -28,3 +28,5 @@ jobs:
         run: python experiments/gate_t4_resonant_transfer.py
       - name: T5 nonlinear boundary
         run: python experiments/gate_t5_break_linear_matrix.py
+      - name: T7 latent regeneration
+        run: python experiments/gate_t7_latent_regeneration.py
